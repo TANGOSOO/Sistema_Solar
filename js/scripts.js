@@ -55,8 +55,10 @@ pointLight.shadow.camera.far = 10000;
 const cubeTextureLoader=new THREE.CubeTextureLoader();
 scene.background=cubeTextureLoader.load([starsTexture, starsTexture, starsTexture, starsTexture, starsTexture, starsTexture])
 
+//Carregador de texturas
 const textureLoader=new THREE.TextureLoader();
 
+//Criação do sol
 const sunGeo=new THREE.SphereGeometry(16, 30, 30);
 const sunMat=new THREE.MeshBasicMaterial({
   map: textureLoader.load(sunTexture)
@@ -64,6 +66,7 @@ const sunMat=new THREE.MeshBasicMaterial({
 const sun=new THREE.Mesh(sunGeo, sunMat);
 scene.add(sun);
 
+//Criação de planetas
 function createPlanet(size, texture, position){
   const geo = new THREE.SphereGeometry(size, 30, 30);
   const mat = new THREE.MeshStandardMaterial({
