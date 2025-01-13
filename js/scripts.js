@@ -13,7 +13,9 @@ import uranusRingTexture from "../img/uranusring.png";
 import neptuneTexture from "../img/neptune.jpg";
 import plutoTexture from "../img/pluto.jpg";
 import starsTexture from "../img/stars.jpg";
-import jupiterTexture from "../img/jupiter.jpg"
+import jupiterTexture from "../img/jupiter.jpg";
+
+import moonTexture from "../img/lua.jpg";
 
 //Renderizador
 const renderer = new THREE.WebGLRenderer();
@@ -66,6 +68,13 @@ const sunMat=new THREE.MeshBasicMaterial({
 const sun=new THREE.Mesh(sunGeo, sunMat);
 scene.add(sun);
 
+//Dados dos planetas
+const textPlanetas = [mercuryTexture, venusTexture, earthTexture, marsTexture, jupiterTexture,
+  saturnTexture, uranusTexture, neptuneTexture, plutoTexture];
+const raiosPlanetas = [3.2, 5.8, 6, 4, 12, 10, 7, 7, 2.8];
+const posxPlanetas = [28, 44, 62, 78, 100, 138, 176, 200, 216];
+const planetas = [];
+
 //Criação de planetas
 function createPlanet(size, texture, position){
   const geo = new THREE.SphereGeometry(size, 30, 30);
@@ -74,32 +83,16 @@ function createPlanet(size, texture, position){
   });
   const mesh = new THREE.Mesh(geo, mat);
   const obj = new THREE.Object3D();
-  obj.add(mesh); //Adiciona um objeto como filho de outro
+  obj.add(mesh); //Adiciona um objeto como filho de outro;
   scene.add(obj);
-  mesh.position.x=position;
+  mesh.position.x = position;
   return {mesh, obj};
-  // if(ring){
-  //   const ringGeo=new THREE.RingGeometry(ring.innerRadius, ring.outerRadius, 32);
-  //   const ringMat=new THREE.MeshBasicMaterial({
-  //     map: textureLoader.load(ring.texture),
-  //     side: THREE.DoubleSide,
-  //   });
-  //   const ringMesh=new THREE.Mesh(ringGeo, ringMat);
-  //   obj.add(ringMesh)
-  //   ringMesh.position.x=position;
-  //   ringMesh.rotation.x=-0.5*Math.PI;
-  // }
 }
 
-const mercury = createPlanet(3.2, mercuryTexture, 28);
-const venus = createPlanet(5.8, venusTexture, 44);
-const earth = createPlanet(6, earthTexture, 62);
-const mars = createPlanet(4, marsTexture, 78);
-const jupiter = createPlanet(12, jupiterTexture, 100);
-const saturn = createPlanet(10, saturnTexture, 138);
-const uranus = createPlanet(7, uranusTexture, 176);
-const neptune = createPlanet(7, neptuneTexture, 200);
-const pluto = createPlanet(2.8, plutoTexture, 216);
+for (let i = 0; i < raiosPlanetas.length; i++)
+{
+  planetas[i] = createPlanet(raiosPlanetas[i], textPlanetas[i], posxPlanetas[i]);
+}
 
 //Aneis de Saturno
 const geoAnelSat = new THREE.RingGeometry (13, 20, 30);
@@ -108,19 +101,19 @@ const matAnelSat = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide
 })
 const anelSat = new THREE.Mesh(geoAnelSat, matAnelSat);
-saturn.obj.add(anelSat);
-anelSat.position.x = saturn.mesh.position.x;
+planetas[5].obj.add(anelSat);
+anelSat.position.x = planetas[5].mesh.position.x;
 //Deixa o anel horizontal
 anelSat.rotation.x = -0.50*Math.PI;
 //Inclina um pouco o anel para receber luz e sombra
 anelSat.rotation.y = -0.05*Math.PI;
 //Permite a saturno causar sombra e os aneis a receberem
-saturn.mesh.castShadow = true;
+planetas[5].mesh.castShadow = true;
 anelSat.receiveShadow = true;
 
 //Aneis de Urano e ajustes
 //Urano gira "deitado"
-uranus.mesh.rotation.z = -0.5*Math.PI;
+planetas[6].mesh.rotation.z = -0.5*Math.PI;
 //Cria aneis de urano
 const geoAnelUr = new THREE.RingGeometry(8, 12, 50);
 const matAnelUr = new THREE.MeshStandardMaterial({
@@ -128,43 +121,65 @@ const matAnelUr = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide
 })
 const anelUr = new THREE.Mesh(geoAnelUr, matAnelUr);
-uranus.obj.add(anelUr);
-anelUr.position.x = uranus.mesh.position.x;
+planetas[6].obj.add(anelUr);
+anelUr.position.x = planetas[6].mesh.position.x;
 anelUr.rotation.x = -0.08*Math.PI;
 //Aneis de urano também são "deitados"
 anelUr.rotation.y = -0.5*Math.PI;
 
+//Criando as luas
+
+
+function criarLua(size, texture, indicePlaneta, radiusOffset){
+  const geo = new THREE.SphereGeometry(size, 30, 30);
+  const mat = new THREE.MeshStandardMaterial({
+    map: textureLoader.load(texture)
+  });
+  const meshLua = new THREE.Mesh(geo, mat);
+  const objLua = new THREE.Group();
+  meshLua.position.set(raiosPlanetas[indicePlaneta] + radiusOffset,0,0);
+  objLua.add(meshLua);
+  objLua.position.x = planetas[indicePlaneta].mesh.position.x;
+  objLua.name = "objLua";
+  planetas[indicePlaneta].obj.add(objLua);
+  return {meshLua, objLua};
+}
+
+const lua = criarLua(1, moonTexture, 2, 3);
 
 //Multiplicador de tempo global
 let t = 1;
 //Velocidades de referencia (terra)
-let velTerraRotacao = 1;
-let velTerraTranslacao = 0.01;
+let velTerraRotacao = 0.01*t;
+let velTerraTranslacao = 0.0001*t;
+
 
 function animate(){
   //Rotação dos planetas
   sun.rotateY(0.00001*t);
   //Mercurio e venus sempre tem o mesmo lado apontando pro sol
-  //mercury.mesh.rotateY(0.04*t);
-  //venus.mesh.rotateY(0.002*t);
-  earth.mesh.rotateY(velTerraRotacao*t);
-  mars.mesh.rotateY(0.959*velTerraRotacao*t); //Dia em marte = 1.04167 dias
-  jupiter.mesh.rotateY(2.399*velTerraRotacao*t); //Dia em jupiter = 0.4167 dia
-  saturn.mesh.rotateY(2.182*velTerraRotacao*t); //Dia em saturno = 0.4583 dia
-  uranus.mesh.rotateY(1.412*velTerraRotacao*t); //Dia em urano = 0.7083 dia
-  neptune.mesh.rotateY(1.5*velTerraRotacao*t); //Dia em netuno = 0.6667 dia
-  pluto.mesh.rotateY(0.0156*velTerraRotacao*t); //Dia em plutão = 6.4 dias
+  planetas[2].mesh.rotateY(velTerraRotacao);
+  planetas[3].mesh.rotateY(0.959*velTerraRotacao); //Dia em marte = 1.04167 dias
+  planetas[4].mesh.rotateY(2.399*velTerraRotacao); //Dia em jupiter = 0.4167 dia
+  planetas[5].mesh.rotateY(2.182*velTerraRotacao); //Dia em saturno = 0.4583 dia
+  planetas[6].mesh.rotateY(1.412*velTerraRotacao); //Dia em urano = 0.7083 dia
+  planetas[7].mesh.rotateY(1.5*velTerraRotacao); //Dia em netuno = 0.6667 dia
+  planetas[8].mesh.rotateY(0.0156*velTerraRotacao); //Dia em plutão = 6.4 dias
 
   //Translação dos planetas com velocidade ajustada com base no periodo orbital
-  mercury.obj.rotateY(4.16*velTerraTranslacao*t);
-  venus.obj.rotateY(1.63*velTerraTranslacao*t);
-  earth.obj.rotateY(velTerraTranslacao*t);
-  mars.obj.rotateY(0.53*velTerraTranslacao*t);
-  jupiter.obj.rotateY(0.0843*velTerraTranslacao*t);
-  saturn.obj.rotateY(0.0339*velTerraTranslacao*t);
-  uranus.obj.rotateY(0.0119*velTerraTranslacao*t);
-  neptune.obj.rotateY(0.006*velTerraTranslacao*t);
-  pluto.obj.rotateY(0.004*velTerraTranslacao*t);
+  planetas[0].obj.rotateY(4.16*velTerraTranslacao);
+  planetas[1].obj.rotateY(1.63*velTerraTranslacao);
+  planetas[2].obj.rotateY(velTerraTranslacao);
+  planetas[3].obj.rotateY(0.53*velTerraTranslacao);
+  planetas[4].obj.rotateY(0.0843*velTerraTranslacao);
+  planetas[5].obj.rotateY(0.0339*velTerraTranslacao);
+  planetas[6].obj.rotateY(0.0119*velTerraTranslacao);
+  planetas[7].obj.rotateY(0.006*velTerraTranslacao);
+  planetas[8].obj.rotateY(0.004*velTerraTranslacao);
+
+  //Translação das luas
+  planetas[2].obj.getObjectByName("objLua").rotateY(velTerraRotacao);
+  planetas[2].obj.getObjectByName("objLua").rotateZ(0.001);
 
   renderer.render(scene, camera);
 }
