@@ -16,6 +16,8 @@ import starsTexture from "../img/stars.jpg";
 import jupiterTexture from "../img/jupiter.jpg";
 
 import moonTexture from "../img/lua.jpg";
+import titanTexture from "../img/titan.jpg";
+import enceladusTexture from "../img/enceladus.jpg";
 
 //Renderizador
 const renderer = new THREE.WebGLRenderer();
@@ -41,6 +43,8 @@ scene.add(camera);
 const orbit = new OrbitControls(camera, renderer.domElement);
 camera.position.set(-90, 140, 140);
 orbit.update();
+
+orbit.target.set(200,0,0);
 
 //Luz ambiente
 //const ambientLight=new THREE.AmbientLight(0x333333);
@@ -72,7 +76,7 @@ scene.add(sun);
 const textPlanetas = [mercuryTexture, venusTexture, earthTexture, marsTexture, jupiterTexture,
   saturnTexture, uranusTexture, neptuneTexture, plutoTexture];
 const raiosPlanetas = [3.2, 5.8, 6, 4, 12, 10, 7, 7, 2.8];
-const posxPlanetas = [28, 44, 62, 78, 100, 138, 176, 200, 216];
+const posxPlanetas = [28, 64, 102, 138, 180, 238, 296, 340, 376];
 const planetas = [];
 
 //Criação de planetas
@@ -83,7 +87,7 @@ function createPlanet(size, texture, position){
   });
   const mesh = new THREE.Mesh(geo, mat);
   const obj = new THREE.Object3D();
-  obj.add(mesh); //Adiciona um objeto como filho de outro;
+  obj.add(mesh); //Adiciona um objeto como filho de outro
   scene.add(obj);
   mesh.position.x = position;
   return {mesh, obj};
@@ -128,9 +132,7 @@ anelUr.rotation.x = -0.08*Math.PI;
 anelUr.rotation.y = -0.5*Math.PI;
 
 //Criando as luas
-
-
-function criarLua(size, texture, indicePlaneta, radiusOffset){
+function criarLua(size, texture, indicePlaneta, radiusOffset, nome){
   const geo = new THREE.SphereGeometry(size, 30, 30);
   const mat = new THREE.MeshStandardMaterial({
     map: textureLoader.load(texture)
@@ -140,19 +142,20 @@ function criarLua(size, texture, indicePlaneta, radiusOffset){
   meshLua.position.set(raiosPlanetas[indicePlaneta] + radiusOffset,0,0);
   objLua.add(meshLua);
   objLua.position.x = planetas[indicePlaneta].mesh.position.x;
-  objLua.name = "objLua";
+  objLua.name = nome;
   planetas[indicePlaneta].obj.add(objLua);
   return {meshLua, objLua};
 }
 
-const lua = criarLua(1, moonTexture, 2, 3);
+const lua = criarLua(1, moonTexture, 2, 5, "lua");
+const titan = criarLua(2, titanTexture, 5, 15, "titan");
+const enceladus = criarLua(1.5, enceladusTexture, 5, 20, "enceladus");
 
 //Multiplicador de tempo global
 let t = 1;
 //Velocidades de referencia (terra)
 let velTerraRotacao = 0.01*t;
 let velTerraTranslacao = 0.0001*t;
-
 
 function animate(){
   //Rotação dos planetas
@@ -178,8 +181,13 @@ function animate(){
   planetas[8].obj.rotateY(0.004*velTerraTranslacao);
 
   //Translação das luas
-  planetas[2].obj.getObjectByName("objLua").rotateY(velTerraRotacao);
-  planetas[2].obj.getObjectByName("objLua").rotateZ(0.001);
+  planetas[2].obj.getObjectByName("lua").rotateY(velTerraRotacao);
+  planetas[2].obj.getObjectByName("lua").rotateZ(0.001);
+
+  planetas[5].obj.getObjectByName("titan").rotateY(velTerraRotacao);
+  planetas[5].obj.getObjectByName("titan").rotateZ(0.0005);
+  planetas[5].obj.getObjectByName("enceladus").rotateY(0.5*velTerraRotacao);
+  planetas[5].obj.getObjectByName("enceladus").rotateZ(-0.001);
 
   renderer.render(scene, camera);
 }
