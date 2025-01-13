@@ -18,6 +18,10 @@ import jupiterTexture from "../img/jupiter.jpg";
 import moonTexture from "../img/lua.jpg";
 import titanTexture from "../img/titan.jpg";
 import enceladusTexture from "../img/enceladus.jpg";
+import ioTexture from "../img/io.jpg";
+import europaTexture from "../img/io.jpg";
+import ganymedeTexture from "../img/ganymede.jpg";
+import callistoTexture from "../img/callisto.jpg";
 
 //Renderizador
 const renderer = new THREE.WebGLRenderer();
@@ -140,6 +144,7 @@ function criarLua(size, texture, indicePlaneta, radiusOffset, nome){
   const meshLua = new THREE.Mesh(geo, mat);
   const objLua = new THREE.Group();
   meshLua.position.set(raiosPlanetas[indicePlaneta] + radiusOffset,0,0);
+  meshLua.castShadow = true;
   objLua.add(meshLua);
   objLua.position.x = planetas[indicePlaneta].mesh.position.x;
   objLua.name = nome;
@@ -150,9 +155,17 @@ function criarLua(size, texture, indicePlaneta, radiusOffset, nome){
 const lua = criarLua(1, moonTexture, 2, 5, "lua");
 const titan = criarLua(2, titanTexture, 5, 15, "titan");
 const enceladus = criarLua(1.5, enceladusTexture, 5, 20, "enceladus");
+const io = criarLua(1.5, ioTexture, 4, 5, "io");
+const europa = criarLua(1.25, europaTexture, 4, 9, "europa");
+const ganymede = criarLua(3, ganymedeTexture, 4, 15, "ganymede");
+const callisto = criarLua(2.8, callistoTexture, 4, 25, "callisto");
+
+//Ajuste para saturno e jupiter receberem sombras das luas
+planetas[4].mesh.receiveShadow = true;
+planetas[5].mesh.receiveShadow = true;
 
 //Multiplicador de tempo global
-let t = 1;
+let t = 10;
 //Velocidades de referencia (terra)
 let velTerraRotacao = 0.01*t;
 let velTerraTranslacao = 0.0001*t;
@@ -188,6 +201,15 @@ function animate(){
   planetas[5].obj.getObjectByName("titan").rotateZ(0.0005);
   planetas[5].obj.getObjectByName("enceladus").rotateY(0.5*velTerraRotacao);
   planetas[5].obj.getObjectByName("enceladus").rotateZ(-0.001);
+
+  planetas[4].obj.getObjectByName("io").rotateY(0.1*velTerraRotacao);
+  planetas[4].obj.getObjectByName("io").rotateZ(0.0015);
+  planetas[4].obj.getObjectByName("europa").rotateY(0.1*velTerraRotacao);
+  planetas[4].obj.getObjectByName("europa").rotateZ(-0.0005);
+  planetas[4].obj.getObjectByName("ganymede").rotateY(0.1*velTerraRotacao);
+  planetas[4].obj.getObjectByName("ganymede").rotateZ(0.0025);
+  planetas[4].obj.getObjectByName("callisto").rotateY(0.1*velTerraRotacao);
+  planetas[4].obj.getObjectByName("callisto").rotateZ(-0.0015);
 
   renderer.render(scene, camera);
 }
