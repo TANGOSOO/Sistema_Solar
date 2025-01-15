@@ -32,6 +32,7 @@ document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+
 //Cena e camera
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -48,11 +49,11 @@ const orbit = new OrbitControls(camera, renderer.domElement);
 camera.position.set(-90, 140, 140);
 orbit.update();
 
-orbit.target.set(200,0,0);
+//orbit.target.set(200,0,0);
 
 //Luz ambiente
-//const ambientLight=new THREE.AmbientLight(0x333333);
-//scene.add(ambientLight);
+const ambientLight=new THREE.AmbientLight(0x333333);
+scene.add(ambientLight);
 
 //Luz pontual do sol
 const pointLight=new THREE.PointLight(0xffffff, 1, 0, 0);
@@ -60,6 +61,8 @@ scene.add(pointLight);
 //Permite a luz do sol causar sombras
 pointLight.castShadow = true;
 pointLight.shadow.camera.far = 10000;
+pointLight.shadow.mapSize.width = 2048;
+pointLight.shadow.mapSize.height = 2048;
 
 //Skybox
 const cubeTextureLoader=new THREE.CubeTextureLoader();
@@ -160,66 +163,148 @@ const europa = criarLua(1.25, europaTexture, 4, 9, "europa");
 const ganymede = criarLua(3, ganymedeTexture, 4, 15, "ganymede");
 const callisto = criarLua(2.8, callistoTexture, 4, 25, "callisto");
 
-//Ajuste para saturno e jupiter receberem sombras das luas
+//Ajuste para terra, jupiter e saturno receberem sombras das luas
+planetas[2].mesh.receiveShadow = true;
 planetas[4].mesh.receiveShadow = true;
 planetas[5].mesh.receiveShadow = true;
 
 //Multiplicador de tempo global
-let t = 10;
+let t = 1;
 //Velocidades de referencia (terra)
-let velTerraRotacao = 0.01*t;
-let velTerraTranslacao = 0.0001*t;
+let velTerraRotacao = 0.01;
+let velTerraTranslacao = 0.0001;
 
 function animate(){
   //Rotação dos planetas
   sun.rotateY(0.00001*t);
   //Mercurio e venus sempre tem o mesmo lado apontando pro sol
-  planetas[2].mesh.rotateY(velTerraRotacao);
-  planetas[3].mesh.rotateY(0.959*velTerraRotacao); //Dia em marte = 1.04167 dias
-  planetas[4].mesh.rotateY(2.399*velTerraRotacao); //Dia em jupiter = 0.4167 dia
-  planetas[5].mesh.rotateY(2.182*velTerraRotacao); //Dia em saturno = 0.4583 dia
-  planetas[6].mesh.rotateY(1.412*velTerraRotacao); //Dia em urano = 0.7083 dia
-  planetas[7].mesh.rotateY(1.5*velTerraRotacao); //Dia em netuno = 0.6667 dia
-  planetas[8].mesh.rotateY(0.0156*velTerraRotacao); //Dia em plutão = 6.4 dias
+  planetas[2].mesh.rotateY(velTerraRotacao*t);
+  planetas[3].mesh.rotateY(0.959*velTerraRotacao*t); //Dia em marte = 1.04167 dias
+  planetas[4].mesh.rotateY(2.399*velTerraRotacao*t); //Dia em jupiter = 0.4167 dia
+  planetas[5].mesh.rotateY(2.182*velTerraRotacao*t); //Dia em saturno = 0.4583 dia
+  planetas[6].mesh.rotateY(1.412*velTerraRotacao*t); //Dia em urano = 0.7083 dia
+  planetas[7].mesh.rotateY(1.5*velTerraRotacao*t); //Dia em netuno = 0.6667 dia
+  planetas[8].mesh.rotateY(0.0156*velTerraRotacao*t); //Dia em plutão = 6.4 dias
 
   //Translação dos planetas com velocidade ajustada com base no periodo orbital
-  planetas[0].obj.rotateY(4.16*velTerraTranslacao);
-  planetas[1].obj.rotateY(1.63*velTerraTranslacao);
-  planetas[2].obj.rotateY(velTerraTranslacao);
-  planetas[3].obj.rotateY(0.53*velTerraTranslacao);
-  planetas[4].obj.rotateY(0.0843*velTerraTranslacao);
-  planetas[5].obj.rotateY(0.0339*velTerraTranslacao);
-  planetas[6].obj.rotateY(0.0119*velTerraTranslacao);
-  planetas[7].obj.rotateY(0.006*velTerraTranslacao);
-  planetas[8].obj.rotateY(0.004*velTerraTranslacao);
+  planetas[0].obj.rotateY(4.16*velTerraTranslacao*t);
+  planetas[1].obj.rotateY(1.63*velTerraTranslacao*t);
+  planetas[2].obj.rotateY(velTerraTranslacao*t);
+  planetas[3].obj.rotateY(0.53*velTerraTranslacao*t);
+  planetas[4].obj.rotateY(0.0843*velTerraTranslacao*t);
+  planetas[5].obj.rotateY(0.0339*velTerraTranslacao*t);
+  planetas[6].obj.rotateY(0.0119*velTerraTranslacao*t);
+  planetas[7].obj.rotateY(0.006*velTerraTranslacao*t);
+  planetas[8].obj.rotateY(0.004*velTerraTranslacao*t);
 
   //Translação das luas
-  planetas[2].obj.getObjectByName("lua").rotateY(velTerraRotacao);
-  planetas[2].obj.getObjectByName("lua").rotateZ(0.001);
+  planetas[2].obj.getObjectByName("lua").rotateY(velTerraRotacao*t);
+  //planetas[2].obj.getObjectByName("lua").rotateZ(0.001);
 
-  planetas[5].obj.getObjectByName("titan").rotateY(velTerraRotacao);
-  planetas[5].obj.getObjectByName("titan").rotateZ(0.0005);
-  planetas[5].obj.getObjectByName("enceladus").rotateY(0.5*velTerraRotacao);
-  planetas[5].obj.getObjectByName("enceladus").rotateZ(-0.001);
+  planetas[5].obj.getObjectByName("titan").rotateY(0.25*velTerraRotacao*t);
+  //planetas[5].obj.getObjectByName("titan").rotateZ(0.0005);
+  planetas[5].obj.getObjectByName("enceladus").rotateY(0.12*velTerraRotacao*t);
+  //planetas[5].obj.getObjectByName("enceladus").rotateZ(-0.001);
 
-  planetas[4].obj.getObjectByName("io").rotateY(0.1*velTerraRotacao);
-  planetas[4].obj.getObjectByName("io").rotateZ(0.0015);
-  planetas[4].obj.getObjectByName("europa").rotateY(0.1*velTerraRotacao);
-  planetas[4].obj.getObjectByName("europa").rotateZ(-0.0005);
-  planetas[4].obj.getObjectByName("ganymede").rotateY(0.1*velTerraRotacao);
-  planetas[4].obj.getObjectByName("ganymede").rotateZ(0.0025);
-  planetas[4].obj.getObjectByName("callisto").rotateY(0.1*velTerraRotacao);
-  planetas[4].obj.getObjectByName("callisto").rotateZ(-0.0015);
+  planetas[4].obj.getObjectByName("io").rotateY(0.31*velTerraRotacao*t);
+  //planetas[4].obj.getObjectByName("io").rotateZ(0.0015);
+  planetas[4].obj.getObjectByName("europa").rotateY(0.15*velTerraRotacao*t);
+  //planetas[4].obj.getObjectByName("europa").rotateZ(-0.0005);
+  planetas[4].obj.getObjectByName("ganymede").rotateY(0.1*velTerraRotacao*t);
+  //planetas[4].obj.getObjectByName("ganymede").rotateZ(0.0025);
+  planetas[4].obj.getObjectByName("callisto").rotateY(0.2*velTerraRotacao*t);
+  //planetas[4].obj.getObjectByName("callisto").rotateZ(-0.0015);
 
+  requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 
-renderer.setAnimationLoop(animate);
+animate();
+//renderer.setAnimationLoop(animate);
 
 window.addEventListener('resize', function () {
   camera.aspect=this.window.innerWidth/this.window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(this.window.innerWidth, this.window.innerHeight);
+})
+
+//Funções dos botões
+document.getElementById("pausar").addEventListener("click", function () {
+  t = 0;
+  orbit.target.set(0,0,0);
+  animate();
+});
+
+document.getElementById("play").addEventListener("click", function () {
+  t = 1;
+  animate();
+});
+
+document.getElementById("acelerar").addEventListener("click", function () {
+  if(t !=0)
+  {
+    t = 2*t;
+  } else {
+    t = 2;
+  }
+  animate();
+});
+
+document.getElementById("0").addEventListener("click", function () {
+  //Pausa a animação
+  t = 0;
+  //getWorldPosition(vetor) escreve no vetor passado a posição atual da mesh do planeta
+  //orbit.target é o atributo com o alvo da camera
+  planetas[0].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("1").addEventListener("click", function () {
+  t = 0;
+  planetas[1].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("2").addEventListener("click", function () {
+  t = 0;
+  planetas[2].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("3").addEventListener("click", function () {
+  t = 0;
+  planetas[3].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("4").addEventListener("click", function () {
+  t = 0;
+  planetas[4].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("5").addEventListener("click", function () {
+  t = 0;
+  planetas[5].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("6").addEventListener("click", function () {
+  t = 0;
+  planetas[6].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("7").addEventListener("click", function () {
+  t = 0;
+  planetas[7].mesh.getWorldPosition(orbit.target);
+  animate();
+})
+
+document.getElementById("8").addEventListener("click", function () {
+  t = 0;
+  planetas[8].mesh.getWorldPosition(orbit.target);
+  animate();
 })
 
 //TESTE COMMIT
