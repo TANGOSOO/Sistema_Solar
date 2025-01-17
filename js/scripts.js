@@ -267,11 +267,11 @@ function animate(){
 
    // Foco nos planetas
    if (opcoes.foco === "Sol") {
-    sol.getWorldPosition(orbita.target); 
+    sol.getWorldPosition(orbita.target); //foco no sol
   } else {
-    const indicePlaneta = comboBox.indexOf(opcoes.foco) - 1; // Índice do planeta
+    const indicePlaneta = comboBox.indexOf(opcoes.foco) - 1; // indice do planeta
     if (indicePlaneta >= 0) {
-      planetas[indicePlaneta].mesh.getWorldPosition(orbita.target);
+      planetas[indicePlaneta].mesh.getWorldPosition(orbita.target); //foco em um planeta escolhido 
     }
   }
 
