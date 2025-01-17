@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as dat from "dat.gui";
 
 import earthTexture from "../img/earth.jpg";
 import marsTexture from "../img/mars.jpg";
@@ -168,13 +169,61 @@ planetas[2].mesh.receiveShadow = true;
 planetas[4].mesh.receiveShadow = true;
 planetas[5].mesh.receiveShadow = true;
 
+//Cria as opções de uma combo box para a gui
+const comboBox=["Sol", "Mercúrio", "Vênus", "Terra", "Marte", "Júpiter", "Saturno", "Urano", "Netuno", "Plutão"];
+//Cria uma GUI para interação com o usuário
+const gui = new dat.GUI();
+const options = {
+  speed: 0, //Velocidade da passagem do tempo
+  tracked: -1, //Planeta em foco
+};
+
+//Cria uma barra deslizante
+gui.add(options, "speed", 0, 1000);
+//Cria uma combo box
+gui.add(options, 'tracked', comboBox).onChange((value) => {
+  switch(value){
+    case "Sol":
+      sun.getWorldPosition(orbit.target);
+      break;
+    case "Mercúrio":
+      planetas[0].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Vênus":
+      planetas[1].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Terra":
+      planetas[2].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Marte":
+      planetas[3].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Júpiter":
+      planetas[4].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Saturno":
+      planetas[5].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Urano":
+      planetas[6].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Netuno":
+      planetas[7].mesh.getWorldPosition(orbit.target);
+      break;
+    case "Plutão":
+      planetas[8].mesh.getWorldPosition(orbit.target);
+      break;
+  };
+});
+
 //Multiplicador de tempo global
-let t = 1;
+let t = options.speed;
 //Velocidades de referencia (terra)
 let velTerraRotacao = 0.01;
 let velTerraTranslacao = 0.0001;
 
 function animate(){
+  t = options.speed
   //Rotação dos planetas
   sun.rotateY(0.00001*t);
   //Mercurio e venus sempre tem o mesmo lado apontando pro sol
@@ -227,84 +276,3 @@ window.addEventListener('resize', function () {
   camera.updateProjectionMatrix();
   renderer.setSize(this.window.innerWidth, this.window.innerHeight);
 })
-
-//Funções dos botões
-document.getElementById("pausar").addEventListener("click", function () {
-  t = 0;
-  orbit.target.set(0,0,0);
-  animate();
-});
-
-document.getElementById("play").addEventListener("click", function () {
-  t = 1;
-  animate();
-});
-
-document.getElementById("acelerar").addEventListener("click", function () {
-  if(t !=0)
-  {
-    t = 2*t;
-  } else {
-    t = 2;
-  }
-  animate();
-});
-
-document.getElementById("0").addEventListener("click", function () {
-  //Pausa a animação
-  t = 0;
-  //getWorldPosition(vetor) escreve no vetor passado a posição atual da mesh do planeta
-  //orbit.target é o atributo com o alvo da camera
-  planetas[0].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("1").addEventListener("click", function () {
-  t = 0;
-  planetas[1].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("2").addEventListener("click", function () {
-  t = 0;
-  planetas[2].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("3").addEventListener("click", function () {
-  t = 0;
-  planetas[3].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("4").addEventListener("click", function () {
-  t = 0;
-  planetas[4].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("5").addEventListener("click", function () {
-  t = 0;
-  planetas[5].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("6").addEventListener("click", function () {
-  t = 0;
-  planetas[6].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("7").addEventListener("click", function () {
-  t = 0;
-  planetas[7].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-document.getElementById("8").addEventListener("click", function () {
-  t = 0;
-  planetas[8].mesh.getWorldPosition(orbit.target);
-  animate();
-})
-
-//TESTE COMMIT
