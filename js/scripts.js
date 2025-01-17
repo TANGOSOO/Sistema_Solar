@@ -265,6 +265,19 @@ function animate(){
   planetas[4].obj.getObjectByName("callisto").rotateY(0.2*velTerraRotacao*t);
   //planetas[4].obj.getObjectByName("callisto").rotateZ(-0.0015);
 
+   // Foco nos planetas
+   if (opcoes.foco === "Sol") {
+    sol.getWorldPosition(orbita.target); 
+  } else {
+    const indicePlaneta = comboBox.indexOf(opcoes.foco) - 1; // Índice do planeta
+    if (indicePlaneta >= 0) {
+      planetas[indicePlaneta].mesh.getWorldPosition(orbita.target);
+    }
+  }
+
+  // Atualizaçao
+  orbita.update();
+
   requestAnimationFrame(animate);
   renderizador.render(cena, camera);
 }
