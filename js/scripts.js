@@ -178,7 +178,7 @@ const gui = new dat.GUI();
 const opcoes = {
   velocidade: 0, //Velocidade da passagem do tempo
   foco: "Sol", //Planeta em foco
-  mostrarInfos: true
+  mostrarInfos: false //Mostra as informações do planeta em foco
 };
 
 
