@@ -186,6 +186,32 @@ planetas[2].mesh.receiveShadow = true;
 planetas[4].mesh.receiveShadow = true;
 planetas[5].mesh.receiveShadow = true;
 
+//Função para mostrar as órbitas dos planetas
+function criarOrbita(raio, segments = 100) {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  
+  for (let i = 0; i <= segments; i++) {
+      const theta = (i / segments) * Math.PI * 2;
+      vertices.push(raio * Math.cos(theta), 0, raio * Math.sin(theta));
+  }
+  
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  
+  const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+  return new THREE.Line(geometry, material);
+}
+
+//Array para por as órbitas
+const orbitas = [];
+//Criação das órbitas
+for (let i = 0; i < posxPlanetas.length; i++) {
+  const orbita = criarOrbita(posxPlanetas[i]);
+  cena.add(orbita);
+  orbitas.push(orbita);
+}
+
+
 //Cria as opções de uma combo box para a gui
 const comboBox=["Sol", "Mercúrio", "Vênus", "Terra", "Marte", "Júpiter", "Saturno", "Urano", "Netuno", "Plutão"];
 //Cria uma GUI para interação com o usuário
@@ -193,7 +219,8 @@ const gui = new dat.GUI();
 const opcoes = {
   velocidade: 0, //Velocidade da passagem do tempo
   foco: "Sol", //Planeta em foco
-  mostrarInfos: false //Mostra as informações do planeta em foco
+  mostrarInfos: false, //Mostra as informações do planeta em foco
+  mostrarOrbita: false, //Mostra as órbitas dos planetas
 };
 
 
@@ -272,6 +299,18 @@ gui.add(opcoes, 'mostrarInfos').name("Mostrar Infos").onChange(() => {
   }
 });
 
+//Cria uma check box para mostrar a órbita
+gui.add(opcoes, 'mostrarOrbita').name("Mostrar Órbitas").onChange(() => {
+  orbitas.forEach(orbita => {
+      orbita.visible = opcoes.mostrarOrbita;
+  });
+});
+
+//Faz com que as órbitas por padrão estejam desativadas
+orbitas.forEach(orbita => {
+  orbita.visible = opcoes.mostrarOrbita;
+});
+
 //Multiplicador de tempo global
 let t = opcoes.velocidade;
 //Velocidades de referencia (terra)
@@ -347,51 +386,16 @@ window.addEventListener('resize', function () {
   renderizador.setSize(this.window.innerWidth, this.window.innerHeight);
 })
 
-function criarOrbita(raio, segments = 100) {
-  const geometry = new THREE.BufferGeometry();
-  const vertices = [];
-  
-  for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * Math.PI * 2;
-      vertices.push(raio * Math.cos(theta), 0, raio * Math.sin(theta));
-  }
-  
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  
-  const material = new THREE.LineBasicMaterial({ color: 0xffffff });
-  return new THREE.Line(geometry, material);
-}
-
-const orbitas = [];
-for (let i = 0; i < posxPlanetas.length; i++) {
-  const orbita = criarOrbita(posxPlanetas[i]);
-  cena.add(orbita);
-  orbitas.push(orbita);
-}
-
-opcoes.mostrarOrbits = true;
-
-gui.add(opcoes, 'mostrarOrbits').name("Mostrar Órbitas").onChange(() => {
-  orbitas.forEach(orbita => {
-      orbita.visible = opcoes.mostrarOrbits;
-  });
-});
-
-orbitas.forEach(orbita => {
-  orbita.visible = opcoes.mostrarOrbits;
-});
-
-
 const listener = new THREE.AudioListener();
 camera.add(listener);
 
 const sound = new THREE.Audio(listener);
 const audioLoader = new THREE.AudioLoader();
 audioLoader.load('./audio/sonds.mp3', function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(0.3);
-    sound.play();
+  sound.setBuffer(buffer);
+  sound.setLoop(true);
+  sound.setVolume(0.3);
+  sound.play();
 });
 
 // Função para alternar o áudio
