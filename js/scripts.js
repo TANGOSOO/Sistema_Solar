@@ -346,3 +346,42 @@ window.addEventListener('resize', function () {
   camera.updateProjectionMatrix();
   renderizador.setSize(this.window.innerWidth, this.window.innerHeight);
 })
+
+// Função para criar a linha de órbita
+function criarOrbita(raio, segments = 100) {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  
+  for (let i = 0; i <= segments; i++) {
+      const theta = (i / segments) * Math.PI * 2;
+      vertices.push(raio * Math.cos(theta), 0, raio * Math.sin(theta));
+  }
+  
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  
+  const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+  return new THREE.Line(geometry, material);
+}
+
+// Criando órbitas para cada planeta e adicionando à cena
+const orbitas = [];
+for (let i = 0; i < posxPlanetas.length; i++) {
+  const orbita = criarOrbita(posxPlanetas[i]);
+  cena.add(orbita);
+  orbitas.push(orbita);
+}
+
+// Controle de visibilidade das órbitas
+opcoes.mostrarOrbits = true;
+
+// Adiciona a opção de mostrar/ocultar órbitas na GUI
+gui.add(opcoes, 'mostrarOrbits').name("Mostrar Órbitas").onChange(() => {
+  orbitas.forEach(orbita => {
+      orbita.visible = opcoes.mostrarOrbits;
+  });
+});
+
+// Inicializa a visibilidade das órbitas
+orbitas.forEach(orbita => {
+  orbita.visible = opcoes.mostrarOrbits;
+});
