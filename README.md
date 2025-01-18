@@ -94,7 +94,7 @@ function criarLua(tamanho, textura, indicePlaneta, radiusOffset, nome){
 Por fim, retorna-se o objeto e a *mesh* da lua.
 
 ## Animações
-
+Para implementar as animações de rotação e translação, utilizou-se uma função de animação que é chamada recursivamente usando requestAnimationFrame. Cada planeta e lua foi animado individualmente com base nas velocidades definidas.
 ### Rotação
 
 Para simular a rotação, apenas rotacionou-se a *mesh* do planeta ao redor de Y, como na função que realiza a rotação de Marte.
@@ -110,6 +110,7 @@ planetas[2].obj.rotateY(velTerraTranslacao*t);
 ```
 
 ### Acelerar animações
+Para acelerar as animações, foi implementado um controle que multiplica as velocidades de rotação e translação de todos os planetas e luas por um fator ajustável. Esse fator é controlado através da interface dat.GUI, permitindo ao usuário modificar a velocidade das animações em tempo real.
 
 ## Customizações
 
@@ -124,7 +125,7 @@ Os parâmetros da geometria dos Anéis de Saturno foram um raio interno de 13 e 
 Tanto Urano quanto seus anéis estão ["deitados"](https://en.wikipedia.org/wiki/Uranus#Axial_tilt) em relação ao plano de órbita, ou seja, seu eixo de rotação aponta para o Sol. Para isso, girou-se a *mesh* de Urano na direção -0.5\*pi radianos z e os anéis -0.08\*pi radianos na direção x e -0.5\*pi radianos na direção y.
 
 ## Câmera e controles
-
+A câmera utilizada na simulação é do tipo PerspectiveCamera, configurada para proporcionar uma visão ampla e imersiva do sistema solar. A câmera foi posicionada de forma a capturar uma visão clara e central do Sol e dos planetas ao redor. Para facilitar a interação do usuário com o sistema solar, foi utilizado o módulo OrbitControls da biblioteca Three.js. Este módulo permite que o usuário gire a câmera ao redor do centro da cena, aplique zoom in e zoom out, e mova a câmera para explorar diferentes ângulos.
 ## Projeto hospedado no Vercel
 
 Disponível em [https://sistema-solar-silk.vercel.app/](https://sistema-solar-silk.vercel.app/)
