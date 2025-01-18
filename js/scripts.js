@@ -347,7 +347,6 @@ window.addEventListener('resize', function () {
   renderizador.setSize(this.window.innerWidth, this.window.innerHeight);
 })
 
-// Função para criar a linha de órbita
 function criarOrbita(raio, segments = 100) {
   const geometry = new THREE.BufferGeometry();
   const vertices = [];
@@ -363,7 +362,6 @@ function criarOrbita(raio, segments = 100) {
   return new THREE.Line(geometry, material);
 }
 
-// Criando órbitas para cada planeta e adicionando à cena
 const orbitas = [];
 for (let i = 0; i < posxPlanetas.length; i++) {
   const orbita = criarOrbita(posxPlanetas[i]);
@@ -371,17 +369,45 @@ for (let i = 0; i < posxPlanetas.length; i++) {
   orbitas.push(orbita);
 }
 
-// Controle de visibilidade das órbitas
 opcoes.mostrarOrbits = true;
 
-// Adiciona a opção de mostrar/ocultar órbitas na GUI
 gui.add(opcoes, 'mostrarOrbits').name("Mostrar Órbitas").onChange(() => {
   orbitas.forEach(orbita => {
       orbita.visible = opcoes.mostrarOrbits;
   });
 });
 
-// Inicializa a visibilidade das órbitas
 orbitas.forEach(orbita => {
   orbita.visible = opcoes.mostrarOrbits;
 });
+
+
+const listener = new THREE.AudioListener();
+camera.add(listener);
+
+const sound = new THREE.Audio(listener);
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load('./audio/sonds.mp3', function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.3);
+    sound.play();
+});
+
+// Função para alternar o áudio
+function toggleAudio() {
+  if (sound.isPlaying) {
+      sound.pause();
+  } else {
+      sound.play();
+  }
+}
+
+// Adicionar botão para controlar o áudio
+const audioButton = document.createElement('button');
+audioButton.innerText = 'stop music';
+audioButton.style.position = 'absolute';
+audioButton.style.top = '10px';
+audioButton.style.left = '10px';
+audioButton.addEventListener('click', toggleAudio);
+document.body.appendChild(audioButton);
