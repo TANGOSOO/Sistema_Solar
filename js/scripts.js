@@ -23,6 +23,7 @@ import ioTexture from "../img/io.jpg";
 import europaTexture from "../img/io.jpg";
 import ganymedeTexture from "../img/ganymede.jpg";
 import callistoTexture from "../img/callisto.jpg";
+import Pdiddy from "../img/PuffDaddy.jpg";
 
 //Renderizador
 const renderizador = new THREE.WebGLRenderer();
@@ -79,6 +80,19 @@ const solMat=new THREE.MeshBasicMaterial({
 });
 const sol=new THREE.Mesh(solGeo, solMat);
 cena.add(sol);
+
+const texture = textureLoader.load(Pdiddy);  // Carregando a textura
+
+// Ajustando a repetição da textura
+texture.repeat.set(2, 2);// Diminui o tamanho da textura, ajustando os valores conforme necessário
+
+const diddygeo = new THREE.SphereGeometry(7, 30, 30);
+const diddymat = new THREE.MeshBasicMaterial({
+  map: texture
+});
+
+const pdiddy = new THREE.Mesh(diddygeo, diddymat);
+cena.add(pdiddy);
 
 //Dados dos planetas
 const planetasTextura = [mercurioTextura, venusTextura, terraTextura, marteTextura, jupiterTextura,
@@ -215,6 +229,8 @@ gui.add(opcoes, 'foco', comboBox).onChange((value) => {
       break;
   };
 });
+
+
 
 //Multiplicador de tempo global
 let t = opcoes.velocidade;
