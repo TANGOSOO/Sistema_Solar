@@ -24,6 +24,8 @@ import europaTexture from "../img/io.jpg";
 import ganymedeTexture from "../img/ganymede.jpg";
 import callistoTexture from "../img/callisto.jpg";
 
+import planetasInfo from "./planetasInfo";
+
 //Renderizador
 const renderizador = new THREE.WebGLRenderer();
 renderizador.setSize(window.innerWidth, window.innerHeight);
@@ -176,7 +178,9 @@ const gui = new dat.GUI();
 const opcoes = {
   velocidade: 0, //Velocidade da passagem do tempo
   foco: "Sol", //Planeta em foco
+  mostrarInfos: true
 };
+
 
 //Cria uma barra deslizante
 gui.add(opcoes, "velocidade", 0, 1000);
@@ -214,6 +218,43 @@ gui.add(opcoes, 'foco', comboBox).onChange((value) => {
       planetas[8].mesh.getWorldPosition(orbita.target);
       break;
   };
+
+  const square = document.getElementById("colored-square");
+  const planetaInfo = planetasInfo[value]; // Acessa as novas informações do planeta
+  if (opcoes.mostrarInfos) {
+    square.innerHTML = `
+        <h1>${planetaInfo.nome}</h1>
+        <img src="${planetaInfo.imagem}" alt="${planetaInfo.nome}">
+        <p>Massa: ${planetaInfo.massa}</p>
+        <p>Raio: ${planetaInfo.raio}</p>
+        <p>Temperatura Média: ${planetaInfo.temperaturaMedia}</p>
+        <p>Tempo de Translação: ${planetaInfo.tempoDeTranslacao}</p>
+        <p>Distância do Sol: ${planetaInfo.distanciaDoSol}</p>
+    `;
+    square.style.display = "block"; // Torna a div visível
+}
+});
+
+gui.add(opcoes, 'mostrarInfos').name("Mostrar Infos").onChange(() => {
+  const square = document.getElementById("colored-square");
+  const planetaInfo = planetasInfo[opcoes.foco];  // Utiliza o planeta que está em foco
+
+  if (opcoes.mostrarInfos) {
+      // Atualiza o conteúdo da div com as informações do planeta
+      square.innerHTML = `
+          <h1>${planetaInfo.nome}</h1>
+          <img src="${planetaInfo.imagem}" alt="${planetaInfo.nome}">
+          <p>Massa: ${planetaInfo.massa}</p>
+          <p>Raio: ${planetaInfo.raio}</p>
+          <p>Temperatura Média: ${planetaInfo.temperaturaMedia}</p>
+          <p>Tempo de Translação: ${planetaInfo.tempoDeTranslacao}</p>
+          <p>Distância do Sol: ${planetaInfo.distanciaDoSol}</p>
+      `;
+      square.style.display = "block"; // Torna a div visível
+  } else {
+      // Se a opção estiver desmarcada, oculta as informações
+      square.style.display = "none"; // Esconde a div
+  }
 });
 
 //Multiplicador de tempo global

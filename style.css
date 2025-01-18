@@ -15,3 +15,53 @@
 #seletor {
     width: 80%;
 }
+
+#colored-square {
+    background-color: transparent;
+    width: 200px;  /* Largura do quadrado */
+    height: 350px !important; /* Altura do quadrado */
+
+	padding: 20px;
+    position: fixed; /* Fixo na tela */
+    top: 50%; /* Posiciona no meio da altura */
+    right: 0; /* Alinha ao lado esquerdo */
+    transform: translateY(-50%); /* Centraliza verticalmente */
+    z-index: 1000; /* Garante que o quadrado ficará sobre outros elementos */
+
+    margin-right: 10px !important;
+
+    border-radius: 20px;
+	display: flex; /* Habilita o uso de Flexbox */
+
+	gap: 35px;
+    flex-direction: column; /* Organiza os filhos de cima para baixo (coluna) */
+    align-items: center;
+	justify-items: center;
+	font-family: Arial, Helvetica, sans-serif;
+
+	border: 2px solid white;
+
+	backdrop-filter: blur(20px); /* Aplica o desfoque no fundo */
+    -webkit-backdrop-filter: blur(10px); /* Para navegadores Webkit, como o Safari */
+}
+
+div > h1 {
+	text-align: center;
+	color: white;
+}
+
+div > img{
+	width: 100px;
+	height: 100px;
+	display: block;
+
+	border-radius: 50%;
+}
+
+div > p {
+	color: white;
+
+	font-size: 0.8rem;
+	text-indent: 20px;
+	text-align: center;
+}
