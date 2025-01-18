@@ -306,7 +306,7 @@ gui.add(opcoes, 'mostrarOrbita').name("Mostrar Órbitas").onChange(() => {
   });
 });
 
-//Faz com que as órbitas por padrão estejam desativadas
+//Faz com que as órbitas, por padrão, estejam desativadas
 orbitas.forEach(orbita => {
   orbita.visible = opcoes.mostrarOrbita;
 });
