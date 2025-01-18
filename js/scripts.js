@@ -23,7 +23,9 @@ import ioTexture from "../img/io.jpg";
 import europaTexture from "../img/io.jpg";
 import ganymedeTexture from "../img/ganymede.jpg";
 import callistoTexture from "../img/callisto.jpg";
-import Pdiddy from "../img/PuffDaddy.jpg";
+import puff from "../img/PuffDaddy.jpg";
+
+import planetasInfo from "./planetasInfo";
 
 //Renderizador
 const renderizador = new THREE.WebGLRenderer();
@@ -80,19 +82,6 @@ const solMat=new THREE.MeshBasicMaterial({
 });
 const sol=new THREE.Mesh(solGeo, solMat);
 cena.add(sol);
-
-const texture = textureLoader.load(Pdiddy);  // Carregando a textura
-
-// Ajustando a repetição da textura
-texture.repeat.set(2, 2);// Diminui o tamanho da textura, ajustando os valores conforme necessário
-
-const diddygeo = new THREE.SphereGeometry(7, 30, 30);
-const diddymat = new THREE.MeshBasicMaterial({
-  map: texture
-});
-
-const pdiddy = new THREE.Mesh(diddygeo, diddymat);
-cena.add(pdiddy);
 
 //Dados dos planetas
 const planetasTextura = [mercurioTextura, venusTextura, terraTextura, marteTextura, jupiterTextura,
@@ -170,6 +159,20 @@ function criarLua(tamanho, textura, indicePlaneta, radiusOffset, nome){
   return {meshLua, objLua};
 }
 
+//EasterEgg
+
+const texture = textureLoader.load(puff);
+
+texture.repeat.set(2, 2);
+
+const diddygeo = new THREE.SphereGeometry(7, 30, 30);
+const diddymat = new THREE.MeshBasicMaterial({
+  map: texture
+});
+
+const pdiddy = new THREE.Mesh(diddygeo, diddymat);
+cena.add(pdiddy);
+
 const lua = criarLua(1, luaTextura, 2, 5, "lua");
 const titan = criarLua(2, titanTexture, 5, 15, "titan");
 const enceladus = criarLua(1.5, enceladusTexture, 5, 20, "enceladus");
@@ -190,7 +193,9 @@ const gui = new dat.GUI();
 const opcoes = {
   velocidade: 0, //Velocidade da passagem do tempo
   foco: "Sol", //Planeta em foco
+  mostrarInfos: false //Mostra as informações do planeta em foco
 };
+
 
 //Cria uma barra deslizante
 gui.add(opcoes, "velocidade", 0, 1000);
@@ -228,9 +233,44 @@ gui.add(opcoes, 'foco', comboBox).onChange((value) => {
       planetas[8].mesh.getWorldPosition(orbita.target);
       break;
   };
+
+  const square = document.getElementById("colored-square");
+  const planetaInfo = planetasInfo[value]; // Acessa as novas informações do planeta
+  if (opcoes.mostrarInfos) {
+    square.innerHTML = `
+        <h1>${planetaInfo.nome}</h1>
+        <img src="${planetaInfo.imagem}" alt="${planetaInfo.nome}">
+        <p>Massa: ${planetaInfo.massa}</p>
+        <p>Raio: ${planetaInfo.raio}</p>
+        <p>Temperatura Média: ${planetaInfo.temperaturaMedia}</p>
+        <p>Tempo de Translação: ${planetaInfo.tempoDeTranslacao}</p>
+        <p>Distância do Sol: ${planetaInfo.distanciaDoSol}</p>
+    `;
+    square.style.display = "block"; // Torna a div visível
+}
 });
 
+gui.add(opcoes, 'mostrarInfos').name("Mostrar Infos").onChange(() => {
+  const square = document.getElementById("colored-square");
+  const planetaInfo = planetasInfo[opcoes.foco];  // Utiliza o planeta que está em foco
 
+  if (opcoes.mostrarInfos) {
+      // Atualiza o conteúdo da div com as informações do planeta
+      square.innerHTML = `
+          <h1>${planetaInfo.nome}</h1>
+          <img src="${planetaInfo.imagem}" alt="${planetaInfo.nome}">
+          <p>Massa: ${planetaInfo.massa}</p>
+          <p>Raio: ${planetaInfo.raio}</p>
+          <p>Temperatura Média: ${planetaInfo.temperaturaMedia}</p>
+          <p>Tempo de Translação: ${planetaInfo.tempoDeTranslacao}</p>
+          <p>Distância do Sol: ${planetaInfo.distanciaDoSol}</p>
+      `;
+      square.style.display = "block"; // Torna a div visível
+  } else {
+      // Se a opção estiver desmarcada, oculta as informações
+      square.style.display = "none"; // Esconde a div
+  }
+});
 
 //Multiplicador de tempo global
 let t = opcoes.velocidade;
