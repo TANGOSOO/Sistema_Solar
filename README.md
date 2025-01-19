@@ -129,3 +129,9 @@ A câmera utilizada na simulação é do tipo PerspectiveCamera, configurada par
 ## Projeto hospedado no Vercel
 
 Disponível em [https://sistema-solar-silk.vercel.app/](https://sistema-solar-silk.vercel.app/)
+
+## Link da Demonstração do projeto
+
+[https://youtu.be/ZYFP5aF3Hd0]
+
+
