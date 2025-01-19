@@ -132,6 +132,6 @@ Disponível em [https://sistema-solar-silk.vercel.app/](https://sistema-solar-si
 
 ## Link da Demonstração do projeto
 
-[https://youtu.be/ZYFP5aF3Hd0)
+https://youtu.be/ZYFP5aF3Hd0
 
 
